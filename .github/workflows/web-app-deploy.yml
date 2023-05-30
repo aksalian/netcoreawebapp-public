@@ -17,7 +17,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
 
@@ -44,7 +44,7 @@ jobs:
   deploy:
     permissions:
       contents: none
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     environment:
       name: 'Development'
@@ -67,7 +67,7 @@ jobs:
           mask-inputs: false
           app-settings-json: '[{ "name": "DisplayEnvironment", "value": ${{vars.DisplayEnvironment}}, "slotSetting": false }]'
           id: settings
-          
+
       - run: echo "The webapp-url is ${{ steps.settings.outputs.webapp-url }}"
       - run: |
           az logout
