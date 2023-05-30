@@ -56,6 +56,13 @@ jobs:
         with:
           name: .net-application
 
+      - name: Update App Settings
+        uses: azure/appservice-settings@v1
+        with:
+          name: ${{ env.AZURE_WEBAPP_NAME }}
+          mask-inputs: false
+          app-settings-json: '[{ "name": "DisplayEnvironment", "value": ${{vars.DisplayEnvironment}}, "slotSetting": false }]'
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
