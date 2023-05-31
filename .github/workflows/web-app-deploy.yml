@@ -49,6 +49,9 @@ jobs:
     environment:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      
+    env:
+      APPSETTINGS_PATH: webapplication01\appsettings.json
 
     steps:
       - name: Download artifact from build job
@@ -56,21 +59,43 @@ jobs:
         with:
           name: .net-application
 
-      - uses: azure/login@v1
-        with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      # - uses: azure/login@v1
+      #   with:
+      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-      - name: Update App Settings
-        uses: azure/appservice-settings@v1
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          mask-inputs: false
-          app-settings-json: '[{ "name": "DisplayEnvironment", "value": ${{vars.DisplayEnvironment}}, "slotSetting": false }]'
-          id: settings
+      # - name: Update App Settings
+      #   uses: azure/appservice-settings@v1
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      #     mask-inputs: false
+      #     app-settings-json: '[{ "name": "DisplayEnvironment", "value": ${{vars.DisplayEnvironment}}, "slotSetting": false }]'
+      #     id: settings
 
-      - run: echo "The webapp-url is ${{ steps.settings.outputs.webapp-url }}"
-      - run: |
-          az logout
+      # - run: echo "The webapp-url is ${{ steps.settings.outputs.webapp-url }}"
+      # - run: |
+      #     az logout
+          
+      
+      # - name: Replace Action
+      #   # uses: datamonsters/replace-action@54f8e7be24769a843c1c60a0cc9fa3c1aaa906ca
+      #   uses: datamonsters/replace-action@v2
+      #   with:
+      #     # Files, comma-separated. Supposed PLACEHOLDER in them
+      #     files: ${{ env.APPSETTINGS_PATH }}
+      #     # Comma-separated pairs PLACEHOLDER=value
+      #     replacements: '[fill-me-in-env]=${{vars.DisplayEnvironment}}'
+
+      
+      - name: Replace values in qa properties file
+        uses: bluwy/substitute-string-action@v2
+        with:
+          _input-file: ${{ env.APPSETTINGS_PATH }}
+          _output-file: ${{ env.APPSETTINGS_PATH }}
+          _format-key: '%%key%%'
+          fillmeinenv: ${{ vars.DisplayEnvironment }}
+          # fillapiclientsecret: ${{ secrets.CLIENT_SECRET }}
+          # fillsqlusername: ${{ vars.SQL_USER_NAME }}
+          # fillsqlpwd: ${{ secrets.SQL_PASSWORD}}
           
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
