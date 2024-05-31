@@ -17,7 +17,6 @@ on:
 env:
   DOTNET_VERSION: "6.0.x"
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  TARGET_ENV: ${{ github.event.inputs.target_env }} # ---------- the target env. selected during executing the workflow
 
 defaults:
   run:
@@ -51,10 +50,10 @@ jobs:
 
   deploy-to-dev:
     name: Deploy to development environment
-    if: ${{ github.event.inputs.target_env }} == 'Prod'
+    if: github.event.inputs.target_env == 'Prod'
+    runs-on: windows-latest
     permissions:
       contents: none
-    runs-on: windows-latest
     needs: build
     environment:
       name: 'Development'
