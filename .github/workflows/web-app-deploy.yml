@@ -1,10 +1,18 @@
 name: Deploy Web Application to Azure Web App
 
 on:
-  push:
-    branches:
-      - "main"
+  # push:
+  #   branches:
+  #     - "main"
   workflow_dispatch:
+    inputs:
+      test_scenario:
+        description: Environment
+        type: choice
+        options:
+          - Dev
+          - Test
+          - Prod
 
 env:
   DOTNET_VERSION: "6.0.x"
@@ -42,6 +50,7 @@ jobs:
 
   deploy-to-dev:
     name: Deploy to development environment
+    if: ${{ env.TEST_SCENARIO }} == 'Prod'
     permissions:
       contents: none
     runs-on: windows-latest
