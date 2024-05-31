@@ -50,7 +50,7 @@ jobs:
 
   deploy-to-dev:
     name: Deploy to development environment
-    if: github.event.inputs.target_env == 'Prod'
+    if: github.event.inputs.target_env == 'Dev'
     runs-on: windows-latest
     permissions:
       contents: none
@@ -117,6 +117,7 @@ jobs:
 
   deploy-to-stage:
       name: Deploy to staging environment
+      if: github.event.inputs.target_env == 'Test'
       permissions:
         contents: none
       runs-on: windows-latest
@@ -153,6 +154,7 @@ jobs:
 
   deploy-to-prod:
     name: Deploy to production environment
+    if: github.event.inputs.target_env == 'Prod'
     permissions:
       contents: none
     runs-on: windows-latest
