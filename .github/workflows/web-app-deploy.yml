@@ -51,7 +51,7 @@ jobs:
 
   deploy-to-dev:
     name: Deploy to development environment
-    if: ${{ env.TARGET_ENV }} == 'Prod'
+    if: ${{ github.event.inputs.target_env }} == 'Prod'
     permissions:
       contents: none
     runs-on: windows-latest
