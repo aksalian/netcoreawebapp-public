@@ -1,18 +1,10 @@
 name: Deploy Web Application to Azure Web App
 
 on:
-  # push:
-  #   branches:
-  #     - "main"
-  workflow_dispatch:
-    inputs:
-      target_env:
-        description: Environment
-        type: choice
-        options:
-          - Dev
-          - Test
-          - Prod
+   push:
+     branches:
+       - "main"
+   workflow_dispatch:
 
 env:
   DOTNET_VERSION: "6.0.x"
@@ -50,7 +42,8 @@ jobs:
 
   deploy-to-dev:
     name: Deploy to development environment
-    if: github.event.inputs.target_env == 'Dev'
+    #if: github.event.inputs.target_env == 'Dev'
+    if: github.ref == 'refs/heads/dev'
     runs-on: windows-latest
     permissions:
       contents: none
@@ -117,7 +110,8 @@ jobs:
 
   deploy-to-stage:
       name: Deploy to staging environment
-      if: github.event.inputs.target_env == 'Test'
+      #if: github.event.inputs.target_env == 'Test'
+      if: github.ref == 'refs/heads/test'
       permissions:
         contents: none
       runs-on: windows-latest
@@ -154,7 +148,8 @@ jobs:
 
   deploy-to-prod:
     name: Deploy to production environment
-    if: github.event.inputs.target_env == 'Prod'
+    #if: github.event.inputs.target_env == 'Prod'
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: none
     runs-on: windows-latest
