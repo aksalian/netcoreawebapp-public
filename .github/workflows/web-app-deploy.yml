@@ -46,15 +46,15 @@ jobs:
       - name: Decide deployment environment
         id: select-env
         run: |
-           if: github.ref == 'refs/heads/dev'; then
-           echo "development"
-           echo "selected-stage=dev" >> "$GITHUB_OUTPUT"
-           elif: github.ref == 'refs/heads/test'; then
-           echo "test"
-           echo "selected-stage=test" >> "$GITHUB_OUTPUT"
-           elif: github.ref == 'refs/heads/main'; then
-           echo "production"
-           echo "selected-stage=prod" >> "$GITHUB_OUTPUT"
+              if: github.ref == 'refs/heads/dev'; then
+              echo "development"
+              echo "selected-stage=dev" >> "$GITHUB_OUTPUT"
+              elif: github.ref == 'refs/heads/test';
+              echo "test"
+              echo "selected-stage=test" >> "$GITHUB_OUTPUT"
+              elif: github.ref == 'refs/heads/main';
+              echo "production"
+              echo "selected-stage=prod" >> "$GITHUB_OUTPUT"
 
   deploy-to-dev:
     name: Deploy to development environment
