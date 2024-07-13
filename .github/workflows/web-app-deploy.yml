@@ -55,6 +55,10 @@ jobs:
               elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
               echo "production"
               echo "selected-stage=prod" >> "$GITHUB_OUTPUT"
+              else
+              echo "feature-branch"
+              echo "selected-stage=feature" >> "$GITHUB_OUTPUT"
+              fi
 
   deploy-to-dev:
     name: Deploy to development environment
