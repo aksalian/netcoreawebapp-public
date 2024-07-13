@@ -48,28 +48,28 @@ jobs:
         shell: bash
         run: |
               if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-              echo "development"
+              echo "Deploy to Development"
               echo "selected-stage=DEVELOP" >> "$GITHUB_OUTPUT"
               elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
-              echo "test"
+              echo "Deplot to Test"
               echo "selected-stage=test" >> "$GITHUB_OUTPUT"
               elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
-              echo "production"
+              echo "Deploy to Production"
               echo "selected-stage=prod" >> "$GITHUB_OUTPUT"
               else
               echo "feature-branch"
               echo "selected-stage=feature" >> "$GITHUB_OUTPUT"
               fi
 
-  deploy-to-dev:
+  deploy:
     name: Deploy to  ${{ needs.build.outputs.selected-stage }} environment
     runs-on: windows-latest
     permissions:
       contents: none
     needs: build
-    #if: github.event.inputs.target_env == 'DEVELOP'
+    #if: github.event.inputs.target_env == 'dev'
     #if: github.ref == 'refs/heads/dev'
-    if: needs.build.outputs.selected-stage == 'dev'
+    if: needs.build.outputs.selected-stage == 'DEVELOP'
     environment:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
