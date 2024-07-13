@@ -67,7 +67,7 @@ jobs:
     permissions:
       contents: none
     needs: build
-    #if: github.event.inputs.target_env == 'Dev'
+    #if: github.event.inputs.target_env == 'DEVELOP'
     #if: github.ref == 'refs/heads/dev'
     if: needs.build.outputs.selected-stage == 'dev'
     environment:
