@@ -73,10 +73,11 @@ jobs:
     environment:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-      
+
     env:
       APPSETTINGS_PATH: appsettings.json
       AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
+      env_value: ${{ needs.build.outputs.selected-stage }}
 
     steps:
       - name: Download artifact from build job
@@ -84,6 +85,10 @@ jobs:
         with:
           name: .net-application
 
+      - name: Display Env. Value
+        run: |
+           echo "Environment Value: " ${{ env.env_value }}
+           
       # - uses: azure/login@v1
       #   with:
       #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
