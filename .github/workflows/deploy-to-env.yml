@@ -17,7 +17,7 @@ defaults:
 
 jobs:
   decide-env:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     outputs:
        selected-stage: ${{ steps.select-env.outputs.selected-stage }}
     steps:
