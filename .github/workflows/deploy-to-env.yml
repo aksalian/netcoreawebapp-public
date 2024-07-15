@@ -72,7 +72,7 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: none
-    needs: build
+    needs: [decide-env, build]
     #if: needs.decide-env.outputs.selected-stage == 'develop'
     environment:
       name: ${{ needs.build.outputs.selected-stage }}
@@ -89,9 +89,9 @@ jobs:
         with:
           name: .net-application
       
-      - name: Display Environment Value
-        shell: bash
-        run: echo "Environment Value ${{ env.env_value }}"
+      #- name: Display Environment Value
+      #  shell: bash
+      #  run: echo "Environment Value ${{ env.env_value }}"
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
