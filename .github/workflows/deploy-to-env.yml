@@ -17,7 +17,7 @@ defaults:
 
 jobs:
   decide-env:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     outputs:
        selected-stage: ${{ steps.select-env.outputs.selected-stage }}
     steps:
@@ -25,6 +25,7 @@ jobs:
       
       - name: Decide deployment environment
         id: select-env
+        shell: bash
         run: |
            if: github.ref == 'refs/heads/develop'; then
            echo "develop"
