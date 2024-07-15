@@ -90,6 +90,7 @@ jobs:
           name: .net-application
       
       - name: Display Environment Value
+        shell: bash
         run: echo "Environment Value ${{ env.env_value }}"
 
       - name: Deploy to Azure Web App
