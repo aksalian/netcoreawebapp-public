@@ -21,25 +21,27 @@ jobs:
     outputs:
        selected-stage: ${{ steps.select-env.outputs.selected-stage }}
     steps:
-      - name: Decide deployment environment
-        id: select-env
-        shell: bash
-        run: |
-           if: github.ref == 'refs/heads/develop'; then
-           echo "develop"
-           echo "selected-stage=develop" >> "$GITHUB_OUTPUT"
-           elif: github.ref == 'refs/heads/test'; then
+       - name: Decide deployment environment
+         id: select-env
+         shell: bash
+         run: |
+           if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+           echo "development"
+           echo "selected-stage=DEVELOP" >> "$GITHUB_OUTPUT"
+           elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
            echo "test"
            echo "selected-stage=test" >> "$GITHUB_OUTPUT"
-           elif: github.ref == 'refs/heads/main'; then
+           elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
            echo "production"
            echo "selected-stage=prod" >> "$GITHUB_OUTPUT"
+           else
+           echo "feature-branch"
+           echo "selected-stage=feature" >> "$GITHUB_OUTPUT"
+           fi
 
   build:
     runs-on: windows-latest
     needs: decide-env
-    outputs:
-       selected-stage: ${{ steps.select-env.outputs.selected-stage }}
     steps:
       - uses: actions/checkout@v3
 
@@ -64,12 +66,12 @@ jobs:
           path: ${{ env.DOTNET_ROOT }}/webapp
 
   deploy:
-    name: Deploy to ${{ needs.build.outputs.selected-stage }} environment
+    name: Deploy to ${{ needs.decide-env.outputs.selected-stage }} environment
     runs-on: windows-latest
     permissions:
       contents: none
     needs: build
-    #if: needs.build.outputs.selected-stage == 'develop'
+    #if: needs.decide-env.outputs.selected-stage == 'develop'
     environment:
       name: ${{ needs.build.outputs.selected-stage }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -77,13 +79,17 @@ jobs:
     env:
       APPSETTINGS_PATH: appsettings.json
       AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
+      env_value: ${{ needs.decide-env.outputs.selected-stage }}
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: .net-application
-          
+      
+      - name: Display Environment Value
+        run: echo "Environment Value ${{ env.env_value }}"
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
