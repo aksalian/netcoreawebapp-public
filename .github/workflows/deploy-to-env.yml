@@ -24,9 +24,9 @@ jobs:
       - name: Decide deployment environment
         id: select-env
         run: |
-           if: github.ref == 'refs/heads/dev'; then
-           echo "dev"
-           echo "selected-stage=dev" >> "$GITHUB_OUTPUT"
+           if: github.ref == 'refs/heads/develop'; then
+           echo "develop"
+           echo "selected-stage=develop" >> "$GITHUB_OUTPUT"
            elif: github.ref == 'refs/heads/test'; then
            echo "test"
            echo "selected-stage=test" >> "$GITHUB_OUTPUT"
@@ -68,7 +68,7 @@ jobs:
     permissions:
       contents: none
     needs: build
-    #if: needs.build.outputs.selected-stage == 'dev'
+    #if: needs.build.outputs.selected-stage == 'develop'
     environment:
       name: ${{ needs.build.outputs.selected-stage }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
