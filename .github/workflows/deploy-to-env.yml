@@ -21,6 +21,8 @@ jobs:
     outputs:
        selected-stage: ${{ steps.select-env.outputs.selected-stage }}
     steps:
+       - uses: actions/checkout@v3
+       
        - name: Decide deployment environment
          id: select-env
          shell: bash
