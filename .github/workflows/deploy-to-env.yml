@@ -1,4 +1,4 @@
-name: Deploy Web Application to Azure Web App
+name: Env specific - Deploy Web Application to Azure Web App
 
 on:
    push:
