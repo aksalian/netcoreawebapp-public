@@ -9,6 +9,7 @@ on:
 env:
   DOTNET_VERSION: "6.0.x"
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  env-name: "-na-"
 
 defaults:
   run:
@@ -17,6 +18,8 @@ defaults:
 jobs:
   build:
     runs-on: windows-latest
+    outputs:
+       selected-stage: ${{ steps.select-env.outputs.selected-stage }}
     steps:
       - uses: actions/checkout@v3
 
@@ -40,14 +43,28 @@ jobs:
           name: .net-application
           path: ${{ env.DOTNET_ROOT }}/webapp
 
+      - name: Decide deployment environment
+        id: select-env
+        run: |
+           if: github.ref == 'refs/heads/dev'; then
+           echo "development"
+           echo "selected-stage=dev" >> "$GITHUB_OUTPUT"
+           elif: github.ref == 'refs/heads/test'; then
+           echo "test"
+           echo "selected-stage=test" >> "$GITHUB_OUTPUT"
+           elif: github.ref == 'refs/heads/main'; then
+           echo "production"
+           echo "selected-stage=prod" >> "$GITHUB_OUTPUT"
+
   deploy-to-dev:
     name: Deploy to development environment
-    #if: github.event.inputs.target_env == 'Dev'
-    if: github.ref == 'refs/heads/dev'
     runs-on: windows-latest
     permissions:
       contents: none
     needs: build
+    #if: github.event.inputs.target_env == 'Dev'
+    #if: github.ref == 'refs/heads/dev'
+    if: needs.build.outputs.selected-stage == 'dev'
     environment:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -111,11 +128,12 @@ jobs:
   deploy-to-stage:
       name: Deploy to staging environment
       #if: github.event.inputs.target_env == 'Test'
-      if: github.ref == 'refs/heads/test'
+      #if: github.ref == 'refs/heads/test'
       permissions:
         contents: none
       runs-on: windows-latest
       needs: build
+      if: needs.build.outputs.selected-stage == 'test'
       environment:
         name: 'Staging'
         url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -149,11 +167,12 @@ jobs:
   deploy-to-prod:
     name: Deploy to production environment
     #if: github.event.inputs.target_env == 'Prod'
-    if: github.ref == 'refs/heads/main'
+    #if: github.ref == 'refs/heads/main'
     permissions:
       contents: none
     runs-on: windows-latest
     needs: build
+    if: needs.build.outputs.selected-stage == 'prod'
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}

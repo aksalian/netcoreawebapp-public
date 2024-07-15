@@ -1,0 +1,92 @@
+name: Env specific - Deploy Web Application to Azure Web App
+
+on:
+   push:
+     branches:
+       - "main"
+   workflow_dispatch:
+
+env:
+  DOTNET_VERSION: "6.0.x"
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  env-name: "-na-"
+
+defaults:
+  run:
+    working-directory: ./webapplication01
+
+jobs:
+  decide-env:
+    runs-on: windows-latest
+    outputs:
+       selected-stage: ${{ steps.select-env.outputs.selected-stage }}
+    steps:
+      - name: Decide deployment environment
+        id: select-env
+        run: |
+           if: github.ref == 'refs/heads/dev'; then
+           echo "dev"
+           echo "selected-stage=dev" >> "$GITHUB_OUTPUT"
+           elif: github.ref == 'refs/heads/test'; then
+           echo "test"
+           echo "selected-stage=test" >> "$GITHUB_OUTPUT"
+           elif: github.ref == 'refs/heads/main'; then
+           echo "production"
+           echo "selected-stage=prod" >> "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: windows-latest
+    needs: decide-env
+    outputs:
+       selected-stage: ${{ steps.select-env.outputs.selected-stage }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up .Net Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install Dependencies
+        run: dotnet restore
+
+      - name: Build Project
+        run: dotnet build --configuration Release
+
+      - name: Publish Project
+        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/webapp
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-application
+          path: ${{ env.DOTNET_ROOT }}/webapp
+
+  deploy:
+    name: Deploy to ${{ needs.build.outputs.selected-stage }} environment
+    runs-on: windows-latest
+    permissions:
+      contents: none
+    needs: build
+    #if: needs.build.outputs.selected-stage == 'dev'
+    environment:
+      name: ${{ needs.build.outputs.selected-stage }}
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      
+    env:
+      APPSETTINGS_PATH: appsettings.json
+      AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-application
+          
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
