@@ -1,35 +1,23 @@
 name: Env specific - Deploy Web Application to Azure Web App
 
 on:
-   push:
-     branches:
-       - "develop"
-   workflow_dispatch:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
 
 env:
   DOTNET_VERSION: "6.0.x"
+  AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  env-name: "-na-"
 
 defaults:
   run:
     working-directory: ./webapplication01
 
 jobs:
-  display-env:
-    runs-on: windows-latest
-    outputs:
-       selected-stage: ${{ steps.select-env.outputs.selected-stage }}
-    steps:
-       - uses: actions/checkout@v3
-       
-       - name: Display Values
-         shell: bash
-         run: |
-           echo ${{ github.ref_name }}
-
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
@@ -50,31 +38,29 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: .net-application
+          name: .net-app
           path: ${{ env.DOTNET_ROOT }}/webapp
 
   deploy:
     name: Deploy to ${{ github.ref_name }} environment
-    runs-on: windows-latest
     permissions:
       contents: none
+    runs-on: ubuntu-latest
     needs: build
     environment:
       name: ${{ github.ref_name }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-      
-    env:
-      APPSETTINGS_PATH: appsettings.json
-      AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
-      env_value: ${{ github.ref_name }}
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: .net-application
+          name: .net-app
 
-      - name: Display Values
-        shell: bash
-        run: |
-           echo ${{ github.ref_name }}
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
