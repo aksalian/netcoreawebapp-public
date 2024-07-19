@@ -57,16 +57,6 @@ jobs:
         with:
           name: .net-app
 
-      - name: Set Web App name based on environment
-        run: |
-          if [[ "${{ github.ref_name }}" == "refs/heads/develop"]]; then
-             echo "AZURE_WEBAPP_NAME=netcorewebapp02" >> "$GITHUB_ENV"
-          elif [[ "${{ github.ref_name }}" == "refs/heads/integration"]]; then
-             echo "AZURE_WEBAPP_NAME=netcorewebapp03_test" >> "$GITHUB_ENV"
-           elif [[ "${{ github.ref_name }}" == "refs/heads/main"]]; then
-             echo "AZURE_WEBAPP_NAME=netcorewebapp04_prod" >> "$GITHUB_ENV"
-          fi
-
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
