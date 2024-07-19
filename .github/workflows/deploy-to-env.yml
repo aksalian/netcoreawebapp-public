@@ -8,7 +8,7 @@ on:
 
 env:
   DOTNET_VERSION: "6.0.x"
-  AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
+  #AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
 
 defaults:
@@ -56,6 +56,16 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: .net-app
+
+      - name: Set Web App name based on environment
+        run: |
+          if [[ "${{ github.ref_name }}" == "refs/heads/develop"]]; then
+             echo "AZURE_WEBAPP_NAME=netcorewebapp02" >> "$GITHUB_ENV"
+          elif [[ "${{ github.ref_name }}" == "refs/heads/integration"]]; then
+             echo "AZURE_WEBAPP_NAME=netcorewebapp03_test" >> "$GITHUB_ENV"
+           elif [[ "${{ github.ref_name }}" == "refs/heads/main"]]; then
+             echo "AZURE_WEBAPP_NAME=netcorewebapp04_prod" >> "$GITHUB_ENV"
+          fi
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
