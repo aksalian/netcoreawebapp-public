@@ -1,9 +1,9 @@
 name: Env specific - Deploy Web Application to Azure Web App
 
 on:
-  push:
-    branches:
-      - "main"
+  # push:
+  #   branches:
+  #     - "main"
   workflow_dispatch:
 
 env:
@@ -11,9 +11,9 @@ env:
   #AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
 
-defaults:
-  run:
-    working-directory: ./webapplication01
+# defaults:
+#   run:
+#     working-directory: ./webapplication01
 
 jobs:
   build:
@@ -21,25 +21,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up .Net Core
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+      # - name: Set up .Net Core
+      #   uses: actions/setup-dotnet@v2
+      #   with:
+      #     dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install Dependencies
-        run: dotnet restore
+      # - name: Install Dependencies
+      #   run: dotnet restore
 
-      - name: Build Project
-        run: dotnet build --configuration Release
+      # - name: Build Project
+      #   run: dotnet build --configuration Release
 
-      - name: Publish Project
-        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/webapp
+      # - name: Publish Project
+      #   run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/webapp
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{ env.DOTNET_ROOT }}/webapp
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: .net-app
+      #     path: ${{ env.DOTNET_ROOT }}/webapp
 
   deploy:
     name: Deploy to ${{ github.ref_name == 'main' && 'prod' || github.ref_name }} environment
@@ -53,10 +53,10 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
+      # - name: Download artifact from build job
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: .net-app
 
         # For Validation
       - name: Print variable to console
@@ -68,9 +68,9 @@ jobs:
           # retrieve these GitHub ENV variables
           echo "${{ env.Tests }} is the value set in environment variable"
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+      # - name: Deploy to Azure Web App
+      #   id: deploy-to-webapp
+      #   uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
