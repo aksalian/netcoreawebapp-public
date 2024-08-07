@@ -66,7 +66,7 @@ jobs:
           # echo "Tests= ${{ env.AZURE_WEBAPP_NAME }}" >> $GITHUB_ENV
     
           # retrieve these GitHub ENV variables
-          echo "${{ env.AZURE_WEBAPP_NAME }} is the value set in environment variable"
+          echo "$AZURE_WEBAPP_NAME is the value set in environment variable"
 
       # - name: Deploy to Azure Web App
       #   id: deploy-to-webapp
