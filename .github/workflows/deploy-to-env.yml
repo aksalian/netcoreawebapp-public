@@ -59,7 +59,7 @@ jobs:
           name: .net-app
 
       - name: Display ENV PARAM Values
-        run: echo ${{ env.ENV_PARAM }}
+        run: "echo ${{ env.ENV_PARAM }}"
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
