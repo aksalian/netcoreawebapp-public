@@ -60,8 +60,13 @@ jobs:
 
         # For Validation
       - name: Print variable to console
-        shell: powershell
-        run: echo "Test=${{ env.AZURE_WEBAPP_NAME }}"
+        shell: bash
+        run: |
+          # set as GitHub ENV variables
+          echo "Tests= ${{ env.AZURE_WEBAPP_NAME }}" >> $GITHUB_ENV
+    
+          # retrieve these GitHub ENV variables
+          echo "${{ env.Tests }} is the value set in environment variable"
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
