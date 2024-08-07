@@ -68,7 +68,7 @@ jobs:
           # retrieve these GitHub ENV variables
           echo "Deploying direct name $name"
           echo "Deploying local with env ${{ env.name }}"
-          echo "Web AppName ${{ env.AZURE_WEBAPP_NAME }}"
+          echo "Web AppName ${{ vars.AZURE_WEBAPP_NAME }}"
           echo "Path ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
 
       # - name: Deploy to Azure Web App
