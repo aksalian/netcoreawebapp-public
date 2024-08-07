@@ -60,7 +60,7 @@ jobs:
 
         # For Validation
       - name: Print variable to console
-        shell: cmd
+        shell: powershell
         run: echo "Test=${{ env.AZURE_WEBAPP_NAME }}"
 
       - name: Deploy to Azure Web App
