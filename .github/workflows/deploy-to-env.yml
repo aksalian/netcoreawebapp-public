@@ -21,25 +21,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up .Net Core
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+      # - name: Set up .Net Core
+      #   uses: actions/setup-dotnet@v2
+      #   with:
+      #     dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install Dependencies
-        run: dotnet restore
+      # - name: Install Dependencies
+      #   run: dotnet restore
 
-      - name: Build Project
-        run: dotnet build --configuration Release
+      # - name: Build Project
+      #   run: dotnet build --configuration Release
 
-      - name: Publish Project
-        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/webapp
+      # - name: Publish Project
+      #   run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/webapp
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{ env.DOTNET_ROOT }}/webapp
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: .net-app
+      #     path: ${{ env.DOTNET_ROOT }}/webapp
 
   deploy:
     name: Deploy to ${{ github.ref_name == 'main' && 'prod' || github.ref_name }} environment
@@ -58,10 +58,10 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
+      # - name: Download artifact from build job
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: .net-app
 
       - name: Validate the ENV. Values & Secrets
         shell: bash
