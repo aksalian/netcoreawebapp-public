@@ -81,6 +81,8 @@ jobs:
           echo "AZURE_REGION = ${{ env.AZURE_REGION }}"
           echo "AZURE_VMNAME = ${{ env.AZURE_VMNAME }}"
           echo AZURE_CLIENTID = ${{ secrets[env.AZURE_CLIENTID] }}
+          echo "AZURE_REGION = $AZURE_REGION"
+          echo "AZURE_VMNAME = $AZURE_VMNAME"
           echo "AZURE_CLIENTID = $AZURE_CLIENTID"
 
       # - name: Deploy to Azure Web App
