@@ -64,6 +64,7 @@ jobs:
           name: .net-app
 
       - name: Validate the ENV. Values & Secrets
+        shell: bash
         run: |
           echo "AZURE_REGION = ${{ env.AZURE_REGION }}"
           echo "AZURE_VMNAME = ${{ env.AZURE_VMNAME }}"
