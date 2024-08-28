@@ -78,9 +78,11 @@ jobs:
       - name: Validate the ENV. Values & Secrets
         shell: bash
         run: |
-          echo "AZURE_REGION = ${{ vars.AZURE_REGION }}"
-          echo "AZURE_VMNAME = ${{ vars.AZURE_VMNAME }}"
+          echo "NEW_VAR = " ${{ vars.NEW_VAR }}
+          echo "AZURE_REGION = " ${{ vars.AZURE_REGION }}
+          echo "AZURE_VMNAME = " ${{ vars.AZURE_VMNAME }}
           echo AZURE_CLIENTID = ${{ secrets[vars.AZURE_CLIENTID] }}
+          echo "NEW_VAR = $NEW_VAR"
           echo "AZURE_REGION = $AZURE_REGION"
           echo "AZURE_VMNAME = $AZURE_VMNAME"
           echo "AZURE_CLIENTID = $AZURE_CLIENTID"
