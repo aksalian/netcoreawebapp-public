@@ -81,8 +81,6 @@ jobs:
           echo "NEW_VAR = " ${{ vars.NEW_VAR }}
           echo "Display AZURE_REGION = " ${{ vars.AZURE_REGION }}
           echo "AZURE_VMNAME = " ${{ vars.AZURE_VMNAME }}
-          #echo AZURE_CLIENTID = ${{ secrets[vars.AZURE_CLIENTID] }}
-          #echo AZURE_CLIENTID = ${{ secrets[${{ github.event.inputs.deploy_env }}_CLIENTID] }}
           echo "NEW_VAR = $NEW_VAR"
           echo "AZURE_REGION = $AZURE_REGION"
           echo "AZURE_VMNAME = $AZURE_VMNAME"
