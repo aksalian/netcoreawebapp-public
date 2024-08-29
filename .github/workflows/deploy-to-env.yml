@@ -66,8 +66,8 @@ jobs:
       AZURE_CLIENTID:  ${{ github.event.inputs.deploy_env }}_CLIENTID
       
     environment:
-      name: ${{ github.ref_name == 'main' && 'prod' || github.ref_name }}
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      name: ${{ github.event.inputs.deploy_env }}
+      #url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
       # - name: Download artifact from build job
