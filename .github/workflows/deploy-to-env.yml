@@ -65,8 +65,8 @@ jobs:
       AZURE_VMNAME:  ${{ github.event.inputs.deploy_env }}_VMNAME
       AZURE_CLIENTID:  ${{ github.event.inputs.deploy_env }}_CLIENTID
       
-    environment:
-      name: ${{ github.event.inputs.deploy_env }}
+    # environment:
+    #   name: ${{ github.event.inputs.deploy_env }}
       #url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
