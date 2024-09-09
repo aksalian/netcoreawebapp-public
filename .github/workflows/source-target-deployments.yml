@@ -42,7 +42,7 @@ jobs:
     if: contains(fromJSON('["develop", "integration", "main"]'), github.ref_name) 
    
     environment:
-      name: ${{ github.event.inputs.deploy_env }}
+      name: ${{ github.event.inputs.source_env }}
 
     steps:
       - name: Set the source env. values
@@ -114,7 +114,7 @@ jobs:
       # this is technically not necessary, but it's useful for debugging
       - name: Print variables to console
         run: |
-          echo Target source region is: ${{ env.SOURCE_AZ_REGION }}
-          echo Target source vm is: ${{ env.SOURCE_VM }}
-          echo Target destination region is: ${{ env.DESTINATION_AZ_REGION }}
-          echo Target destination vm is: ${{ env.DESTINATION_VM }}
+          echo Target source region is: ${{ needs.source_env.outputs.o_source_env }} # ${{ env.SOURCE_AZ_REGION }}
+          echo Target source vm is: ${{ needs.source_env.outputs.o_source_vm }} # ${{ env.SOURCE_VM }}
+          echo Target destination region is: ${{ needs.source_env.outputs.o_dest_env }} # ${{ env.DESTINATION_AZ_REGION }}
+          echo Target destination vm is: ${{ needs.source_env.outputs.o_dest_vm }} # ${{ env.DESTINATION_VM }}
