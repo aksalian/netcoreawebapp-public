@@ -68,8 +68,8 @@ jobs:
       contents: none
     runs-on: ubuntu-latest
     outputs:
-      o_dest_env: ${{ steps.s_env.outputs.dest_azure_region }}
-      o_dest_vm: ${{ steps.s_env.outputs.dest_azure_vm }}
+      o_dest_env: ${{ steps.d_env.outputs.dest_azure_region }}
+      o_dest_vm: ${{ steps.d_env.outputs.dest_azure_vm }}
     needs: build
     if: contains(fromJSON('["develop", "integration", "main"]'), github.ref_name) 
       
