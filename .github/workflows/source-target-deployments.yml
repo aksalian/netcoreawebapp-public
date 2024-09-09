@@ -1,80 +1,120 @@
-name: Env specific - Deploy Web Application to Azure Web App
+name: Env specific - Source Target Fetch Environment Variables
 
 on:
   # push:
   #   branches:
   #     - "main"
   workflow_dispatch:
-
-env:
-  DOTNET_VERSION: "6.0.x"
-  #AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-
-# defaults:
-#   run:
-#     working-directory: ./webapplication01
-
+    inputs:
+        source_env:
+          description: Source Env.
+          type: choice
+          options:
+            - develop
+            - integration
+            - prod
+          required: true
+          default: develop
+        dest_env:
+          description: Destination Env.
+          type: choice
+          options:
+            - develop
+            - integration
+            - prod
+          required: true
+          default: integration
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Set up .Net Core
-      #   uses: actions/setup-dotnet@v2
-      #   with:
-      #     dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      # - name: Install Dependencies
-      #   run: dotnet restore
-
-      # - name: Build Project
-      #   run: dotnet build --configuration Release
-
-      # - name: Publish Project
-      #   run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/webapp
-
-      # - name: Upload Artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: .net-app
-      #     path: ${{ env.DOTNET_ROOT }}/webapp
-
-  deploy:
-    name: Deploy to ${{ github.ref_name == 'main' && 'prod' || github.ref_name }} environment
+  source_env:
+    name: Fetch Vars from ${{ github.ref_name == 'main' && 'prod' || github.ref_name }} environment
     permissions:
       contents: none
     runs-on: ubuntu-latest
+    outputs:
+      o_source_env: ${{ steps.s_env.outputs.source_azure_region }}
+      o_source_vm: ${{ steps.s_env.outputs.source_azure_vm }}
     needs: build
     if: contains(fromJSON('["develop", "integration", "main"]'), github.ref_name) 
+   
     environment:
-      name: ${{ github.ref_name == 'main' && 'prod' || github.ref_name }}
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      name: ${{ github.event.inputs.deploy_env }}
 
     steps:
-      # - name: Download artifact from build job
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: .net-app
-
-        # For Validation
-      - name: Print variable to console
-        #shell: bash
+      - name: Set the source env. values
+        id: s_env
+        shell: bash
         run: |
-          # set as GitHub ENV variables
-          # echo "Tests= ${{ env.AZURE_WEBAPP_NAME }}" >> $GITHUB_ENV
-    
-          # retrieve these GitHub ENV variables
-          echo "Deploying direct name $name"
-          echo "Deploying local with env ${{ env.name }}"
-          echo "Web AppName ${{ vars.AZURE_WEBAPP_NAME }}"
-          echo "Path ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+          echo "source_azure_region= ${{ vars.AZURE_REGION }}"  >> $GITHUB_OUTPUT
+          echo "source_azure_vm= ${{ vars.AZURE_VMNAME }}"  >> $GITHUB_OUTPUT
+          
+          echo "Display Source Azure Region from Environment Settings = " ${{ vars.AZURE_REGION }}
+          echo "Display Source VM Name from Environment Settings = " ${{ vars.AZURE_VMNAME }}
 
-      # - name: Deploy to Azure Web App
-      #   id: deploy-to-webapp
-      #   uses: azure/webapps-deploy@v2
-        # with:
-        #   app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        #   publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        #   package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      # this is technically not necessary, but it's useful for debugging
+      - name: Print variables to console
+        run: |
+          echo source region is: ${{ steps.s_env.outputs.source_azure_region }}
+          echo source vm is: ${{ steps.s_env.outputs.source_azure_vm }}
+
+
+  dest_env:
+    name: Fetch Vars from ${{ github.event.inputs.dest_env }} environment
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    outputs:
+      o_dest_env: ${{ steps.s_env.outputs.dest_azure_region }}
+      o_dest_vm: ${{ steps.s_env.outputs.dest_azure_vm }}
+    needs: build
+    if: contains(fromJSON('["develop", "integration", "main"]'), github.ref_name) 
+      
+    environment:
+      name: ${{ github.event.inputs.dest_env }}
+
+    steps:
+      - name: Set the destination env. values
+        id: d_env
+        shell: bash
+        run: |
+          echo "dest_azure_region= ${{ vars.AZURE_REGION }}"  >> $GITHUB_OUTPUT
+          echo "dest_azure_vm= ${{ vars.AZURE_VMNAME }}"  >> $GITHUB_OUTPUT
+                    
+          echo "Display Destination Azure Region from Environment Settings = " ${{ vars.AZURE_REGION }}
+          echo "Display Destination VM Name from Environment Settings = " ${{ vars.AZURE_VMNAME }}
+
+      # this is technically not necessary, but it's useful for debugging
+      - name: Print variables to console
+        run: |
+          echo source region is: ${{ steps.d_env.outputs.dest_azure_region }}
+          echo source vm is: ${{ steps.d_env.outputs.dest_azure_vm }}
+
+  target_env:
+    name: Deploy to ${{ github.event.inputs.dest_env }} environment using the above source & dest values
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: [source_env, dest_env]
+    if: contains(fromJSON('["develop", "integration", "main"]'), github.ref_name) 
+
+    environment:
+      name: ${{ github.event.inputs.dest_env }}
+
+    env:
+      SOURCE_AZ_REGION : ${{ needs.source_env.outputs.o_source_env }}
+      DESTINATION_AZ_REGION : ${{ needs.source_env.outputs.o_dest_env }}
+      SOURCE_VM : ${{ needs.source_env.outputs.o_source_vm }}
+      DESTINATION_VM : ${{ needs.source_env.outputs.o_dest_vm }}
+
+    steps:
+      # this is technically not necessary, but it's useful for debugging
+      - name: Print variables to console
+        run: |
+          echo Target source region is: ${{ env.SOURCE_AZ_REGION }}
+          echo Target source vm is: ${{ env.SOURCE_VM }}
+          echo Target destination region is: ${{ env.DESTINATION_AZ_REGION }}
+          echo Target destination vm is: ${{ env.DESTINATION_VM }}
