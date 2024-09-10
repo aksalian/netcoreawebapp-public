@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v3
 
   source_env:
-    name: Fetch Vars from ${{ github.ref_name == 'main' && 'prod' || github.ref_name }} environment
+    name: Fetch Vars from ${{ github.event.inputs.source_env }} environment
     permissions:
       contents: none
     runs-on: ubuntu-latest
@@ -58,8 +58,8 @@ jobs:
       # this is technically not necessary, but it's useful for debugging
       - name: Print variables to console
         run: |
-          echo source region is: ${{ steps.s_env.outputs.source_azure_region }}
-          echo source vm is: ${{ steps.s_env.outputs.source_azure_vm }}
+          echo source region from outputs  is: ${{ steps.s_env.outputs.source_azure_region }}
+          echo source vm from outputs is: ${{ steps.s_env.outputs.source_azure_vm }}
 
 
   dest_env:
@@ -90,8 +90,8 @@ jobs:
       # this is technically not necessary, but it's useful for debugging
       - name: Print variables to console
         run: |
-          echo source region is: ${{ steps.d_env.outputs.dest_azure_region }}
-          echo source vm is: ${{ steps.d_env.outputs.dest_azure_vm }}
+          echo source region from outputs is: ${{ steps.d_env.outputs.dest_azure_region }}
+          echo source vm from outputs is: ${{ steps.d_env.outputs.dest_azure_vm }}
 
   target_env:
     name: Deploy to ${{ github.event.inputs.dest_env }} environment using the above source & dest values
@@ -116,5 +116,5 @@ jobs:
         run: |
           echo Target source region is: ${{ needs.source_env.outputs.o_source_env }} # ${{ env.SOURCE_AZ_REGION }}
           echo Target source vm is: ${{ needs.source_env.outputs.o_source_vm }} # ${{ env.SOURCE_VM }}
-          echo Target destination region is: ${{ needs.source_env.outputs.o_dest_env }} # ${{ env.DESTINATION_AZ_REGION }}
-          echo Target destination vm is: ${{ needs.source_env.outputs.o_dest_vm }} # ${{ env.DESTINATION_VM }}
+          echo Target destination region is: ${{ needs.dest_env.outputs.o_dest_env }} # ${{ env.DESTINATION_AZ_REGION }}
+          echo Target destination vm is: ${{ needs.dest_env.outputs.o_dest_vm }} # ${{ env.DESTINATION_VM }}
