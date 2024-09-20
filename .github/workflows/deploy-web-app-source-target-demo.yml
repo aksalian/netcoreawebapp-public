@@ -64,7 +64,7 @@ jobs:
       name: Fetch vars from source - ${{ github.event.inputs.source_env }} environment
       permissions:
         contents: none
-      runs-on: ubuntu-latest
+      runs-on: windows-latest
       outputs:
         o_source_displayenv: ${{ steps.s_env.outputs.source_displayenv }}
         o_source_webapp: ${{ steps.s_env.outputs.source_webapp_name }}
@@ -100,7 +100,7 @@ jobs:
     name: Deploy to target destination - ${{ github.event.inputs.dest_env }} environment using the above source & dest values
     permissions:
       contents: none
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: source_env
     #if: contains(fromJSON('["develop", "integration", "main"]'), github.ref_name) 
     environment:
