@@ -30,9 +30,9 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   env-name: "-na-"
 
-defaults:
-  run:
-    working-directory: ./webapplication01
+# defaults:
+#   run:
+#     working-directory: ./webapplication01
 
 jobs:
   build:
