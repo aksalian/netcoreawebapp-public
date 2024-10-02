@@ -83,7 +83,7 @@ jobs:
             # create step level variables [source_] and assign values from the env. variables based on the environment selected in source dropdown
             echo "source_displayenv = ${{ vars.DISPLAYENV }}"  >> $GITHUB_OUTPUT
             echo "source_webapp_name = ${{ vars.AZURE_WEBAPP_NAME }}"  >> $GITHUB_OUTPUT
-            echo "source_webapp_pp = ${{ vars.o_source_webapp_pp }}"  >> $GITHUB_OUTPUT
+            echo "source_webapp_pp = ${{ vars.AZURE_WEBAPP_PP }}"  >> $GITHUB_OUTPUT
             echo "source_webapp_secret= ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}"  >> $GITHUB_OUTPUT
   
             # to validate if the correct vars are getting fetched from the env. vars based on the environment selected
