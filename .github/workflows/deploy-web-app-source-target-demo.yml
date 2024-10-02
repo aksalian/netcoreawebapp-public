@@ -90,11 +90,11 @@ jobs:
             # echo Source Environment (from Source Job) : ${{ vars.DISPLAYENV }}
             # echo Source Web App Name (from Source Job) : ${{ vars.AZURE_WEBAPP_NAME }}
   
-        # this is technically not necessary, but it's useful for debugging
-        - name: Print variables to console
-          run: |
-            echo Source Environment from outputs: ${{ steps.s_env.outputs.o_source_displayenv }}
-            echo Source Web App from outputs: ${{ steps.s_env.outputs.o_source_webapp }}
+        # # this is technically not necessary, but it's useful for debugging
+        # - name: Print variables to console
+        #   run: |
+        #     echo Source Environment from outputs: ${{ steps.s_env.outputs.o_source_displayenv }}
+        #     echo Source Web App from outputs: ${{ steps.s_env.outputs.o_source_webapp }}
 
   target_env:
     name: Deploy to target destination - ${{ github.event.inputs.dest_env }} environment using the above source & dest values
