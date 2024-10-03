@@ -143,15 +143,15 @@ jobs:
       #     publish-profile: ${{ env. }}
       #     package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-      - name: Replace values in target properties file
-        uses: bluwy/substitute-string-action@v2
-        with:
-          _input-file: ${{ env.APPSETTINGS_PATH }}
-          _output-file: ${{ env.APPSETTINGS_PATH }}
-          _format-key: '%%key%%'
-          fillmeinenv: ${{ vars.DISPLAYENV }}
-          fillmeinsourceenv: ${{ env.SOURCE_DISPLAYENV }}
-          fillmeintargetenv: ${{ vars.DISPLAYENV }}
+      # - name: Replace values in target properties file
+      #   uses: bluwy/substitute-string-action@v2
+      #   with:
+      #     _input-file: ${{ env.APPSETTINGS_PATH }}
+      #     _output-file: ${{ env.APPSETTINGS_PATH }}
+      #     _format-key: '%%key%%'
+      #     fillmeinenv: ${{ vars.DISPLAYENV }}
+      #     fillmeinsourceenv: ${{ env.SOURCE_DISPLAYENV }}
+      #     fillmeintargetenv: ${{ vars.DISPLAYENV }}
             
       - name: Deploy to Target Azure Web App
         id: deploy-to-webapp
