@@ -117,8 +117,8 @@ jobs:
       # this step is technically not necessary, but it's useful for debugging
       - name: Print variables to console
         run: |
-          echo Source Environment (from Target Job) : ${{ needs.source_env.outputs.o_source_displayenv }} # ${{ env.SOURCE_DISPLAYENV }}
-          echo Source Web App (from Target Job) : ${{ needs.source_env.outputs.o_source_webapp }} # ${{ env.SOURCE_WEBAPP }}
+          echo Source Environment from Target Job : ${{ needs.source_env.outputs.o_source_displayenv }} # ${{ env.SOURCE_DISPLAYENV }}
+          echo Source Web App from Target Job : ${{ needs.source_env.outputs.o_source_webapp }} # ${{ env.SOURCE_WEBAPP }}
 
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
