@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 env:
   DOTNET_VERSION: "6.0.x"
-  AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME: netcorewebap-dev # set this to the name of your Azure Web App
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
 defaults:
   run:
