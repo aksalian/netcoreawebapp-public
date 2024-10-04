@@ -1,4 +1,4 @@
-wname: Source-Target Web Application Deployment using Secrets to Azure Web App
+name: Source-Target Web Application Deployment using Secrets to Azure Web App
 
 on:
    # push:
