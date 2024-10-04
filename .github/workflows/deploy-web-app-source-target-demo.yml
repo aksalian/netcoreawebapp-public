@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-latest
     defaults:
      run:
-       working-directory: webapplication01 #./webapplication01
+       working-directory: ./webapplication01
     steps:
       - uses: actions/checkout@v3
 
