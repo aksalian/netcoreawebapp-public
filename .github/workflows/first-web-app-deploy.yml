@@ -52,7 +52,7 @@ jobs:
       
     env:
       APPSETTINGS_PATH: appsettings.json
-      AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
+      #AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
 
     steps:
       - name: Download artifact from build job
@@ -102,7 +102,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
@@ -118,7 +118,7 @@ jobs:
         
       env:
         APPSETTINGS_PATH: appsettings.json
-        AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
+        #AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
   
       steps:
         - name: Download artifact from build job
@@ -138,7 +138,7 @@ jobs:
           id: deploy-to-webapp
           uses: azure/webapps-deploy@v2
           with:
-            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            app-name: ${{ vars.AZURE_WEBAPP_NAME }}
             publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
             package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
@@ -154,7 +154,7 @@ jobs:
       
     env:
       APPSETTINGS_PATH: appsettings.json
-      AZURE_WEBAPP_NAME: netcorewebapp03    # set this to the name of your Azure Web App
+      #AZURE_WEBAPP_NAME: netcorewebapp03    # set this to the name of your Azure Web App
 
     steps:
       - name: Download artifact from build job
@@ -174,6 +174,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
