@@ -1,0 +1,179 @@
+name: First Deploy Web Application to Azure Web App
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: "6.0.x"
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+
+defaults:
+  run:
+    working-directory: ./webapplication02
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up .Net Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install Dependencies
+        run: dotnet restore
+
+      - name: Build Project
+        run: dotnet build --configuration Release
+
+      - name: Publish Project
+        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/webapp
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-application
+          path: ${{ env.DOTNET_ROOT }}/webapp
+
+  deploy-to-dev:
+    name: Deploy to development environment
+    permissions:
+      contents: none
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'develop'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      
+    env:
+      APPSETTINGS_PATH: appsettings.json
+      AZURE_WEBAPP_NAME: netcorewebapp01    # set this to the name of your Azure Web App
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-application
+
+      # - uses: azure/login@v1
+      #   with:
+      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
+
+      # - name: Update App Settings
+      #   uses: azure/appservice-settings@v1
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      #     mask-inputs: false
+      #     app-settings-json: '[{ "name": "DisplayEnvironment", "value": ${{vars.DisplayEnvironment}}, "slotSetting": false }]'
+      #     id: settings
+
+      # - run: echo "The webapp-url is ${{ steps.settings.outputs.webapp-url }}"
+      # - run: |
+      #     az logout
+          
+      
+      # - name: Replace Action
+      #   # uses: datamonsters/replace-action@54f8e7be24769a843c1c60a0cc9fa3c1aaa906ca
+      #   uses: datamonsters/replace-action@v2
+      #   with:
+      #     # Files, comma-separated. Supposed PLACEHOLDER in them
+      #     files: ${{ env.APPSETTINGS_PATH }}
+      #     # Comma-separated pairs PLACEHOLDER=value
+      #     replacements: '[fill-me-in-env]=${{vars.DisplayEnvironment}}'
+
+      
+      - name: Replace values in qa properties file
+        uses: bluwy/substitute-string-action@v2
+        with:
+          _input-file: ${{ env.APPSETTINGS_PATH }}
+          _output-file: ${{ env.APPSETTINGS_PATH }}
+          _format-key: '%%key%%'
+          fillmeinenv: ${{ vars.DisplayEnvironment }}
+          # fillapiclientsecret: ${{ secrets.CLIENT_SECRET }}
+          # fillsqlusername: ${{ vars.SQL_USER_NAME }}
+          # fillsqlpwd: ${{ secrets.SQL_PASSWORD}}
+          
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  deploy-to-stage:
+      name: Deploy to staging environment
+      permissions:
+        contents: none
+      runs-on: windows-latest
+      needs: build
+      environment:
+        name: 'integration'
+        url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+        
+      env:
+        APPSETTINGS_PATH: appsettings.json
+        AZURE_WEBAPP_NAME: netcorewebapp02    # set this to the name of your Azure Web App
+  
+      steps:
+        - name: Download artifact from build job
+          uses: actions/download-artifact@v3
+          with:
+            name: .net-application
+  
+        - name: Replace values in qa properties file
+          uses: bluwy/substitute-string-action@v2
+          with:
+            _input-file: ${{ env.APPSETTINGS_PATH }}
+            _output-file: ${{ env.APPSETTINGS_PATH }}
+            _format-key: '%%key%%'
+            fillmeinenv: ${{ vars.DisplayEnvironment }}
+            
+        - name: Deploy to Azure Web App
+          id: deploy-to-webapp
+          uses: azure/webapps-deploy@v2
+          with:
+            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+            package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  deploy-to-prod:
+    name: Deploy to production environment
+    permissions:
+      contents: none
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'prod'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      
+    env:
+      APPSETTINGS_PATH: appsettings.json
+      AZURE_WEBAPP_NAME: netcorewebapp03    # set this to the name of your Azure Web App
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-application
+
+      - name: Replace values in qa properties file
+        uses: bluwy/substitute-string-action@v2
+        with:
+          _input-file: ${{ env.APPSETTINGS_PATH }}
+          _output-file: ${{ env.APPSETTINGS_PATH }}
+          _format-key: '%%key%%'
+          fillmeinenv: ${{ vars.DisplayEnvironment }}
+          
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
