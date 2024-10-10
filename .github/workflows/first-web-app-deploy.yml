@@ -1,9 +1,9 @@
 name: First Deploy Web Application to Azure Web App
 
 on:
-  push:
-    branches:
-      - "main"
+  # push:
+  #   branches:
+  #     - "main"
   workflow_dispatch:
 
 env:
